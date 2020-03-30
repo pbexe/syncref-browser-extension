@@ -1,7 +1,7 @@
 {
-  "name": "extension-boilerplate",
+  "name": "Syncref",
   "version": "0.0.2",
-  "description": "A template for creating cross-browser extensions",
+  "description": "Synchronize your references",
   "scripts": {
     "chrome-build": "cross-env TARGET=chrome gulp",
     "opera-build": "cross-env TARGET=opera gulp",
@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/EmailThis/extension-boilerplate"
   },
-  "author": "Bharani <bharani91@gmail.com> (https://github.com/bharani91)",
+  "author": "Miles Budden <miles@budden.net>",
   "bugs": {
     "url": "https://github.com/EmailThis/extension-boilerplate/issues"
   },

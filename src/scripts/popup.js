@@ -28,12 +28,17 @@ var renderMessage = (message) => {
 }
 
 var renderBookmark = (data) => {
-  var displayContainer = document.getElementById("display-container")
-  if(data) {
-    var tmpl = template(data);
-    displayContainer.innerHTML = tmpl;  
+  if(chrome.runtime.lastError) {
+    renderMessage(JSON.stringify(chrome.runtime.lastError))
+    setTimeout(renderBookmark, 1000);
   } else {
-    renderMessage("Sorry, could not extract this page's title and URL")
+    var displayContainer = document.getElementById("display-container")
+    if(data) {
+      var tmpl = template(data);
+      displayContainer.innerHTML = tmpl;  
+    } else {
+      renderMessage("Sorry, could not extract this page's title and URL")
+    }
   }
 }
 
@@ -48,9 +53,9 @@ popup.addEventListener("click", function(e) {
     var data = e.target.getAttribute("data-bookmark");
     ext.runtime.sendMessage({ action: "perform-save", data: data }, function(response) {
       if(response && response.action === "saved") {
-        renderMessage("Your bookmark was saved successfully!");
+        renderMessage("Paper successfully added!");
       } else {
-        renderMessage("Sorry, there was an error while saving your bookmark.");
+        renderMessage("Sorry, there was an error while saving paper.");
       }
     })
   }

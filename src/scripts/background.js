@@ -14,31 +14,56 @@ ext.runtime.onMessage.addListener(
     if(request.action === "perform-save") {
       var xhr = new XMLHttpRequest();
       var FD  = new FormData();
-      FD.append("url", JSON.parse(request.data)["url"]);
-      storage.get('color', function(resp) {
-        // TODO get key
-        FD.append("key", "BYmc4RxDlVMAGijgypImIw");
-      });
-      xhr.open("POST", "http://127.0.0.1:8000/api/", true);
-      xhr.onload = function (e) {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            console.log(xhr.responseText);
-            if (xhr.responseText == "OK") {
-              sendResponse({ action: "saved" });
-            } else {
-              sendResponse({ action: "not-saved"});
-            }
-          } else {
-            console.error(xhr.statusText);
-            sendResponse({ action: "not-saved" });
-          }
+      var key_val;
+      var base_url_val;
+      storage.get('key', function(resp) {
+        console.log("Loading key")
+        var key = resp.key;
+        console.log(key);
+        if(key) {
+          key_val = key;
+        } else {
+          sendResponse({ action: "Please enter your API key in the settings menu"})
         }
-      };
-      xhr.onerror = function (e) {
-        console.error(xhr.statusText);
-      };
-      xhr.send(FD); 
+        storage.get('base_url', function(resp) {
+          console.log("Loading URL")
+          var url = resp.base_url;
+          console.log(url);
+          if(url) {
+            base_url_val = url;
+          } else {
+            sendResponse({ action: "Please enter your base URL in the settings menu"})
+          }
+          ///////
+
+          FD.append("url", JSON.parse(request.data)["url"]);
+          FD.append("key", key_val);
+
+          xhr.open("POST", base_url_val + "/api/", true);
+          xhr.onload = function (e) {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 200) {
+                console.log(xhr.responseText);
+                if (xhr.responseText == "OK") {
+                  sendResponse({ action: "saved" });
+                } else {
+                  sendResponse({ action: "not-saved"});
+                }
+              } else {
+                console.error(xhr.statusText);
+                sendResponse({ action: "Server not reachable" });
+              }
+            }
+          };
+          xhr.onerror = function (e) {
+            console.error(xhr.statusText);
+            sendResponse({ action: "Server not reachable" });
+          };
+          xhr.send(FD); 
+
+          ///////
+        });
+      });
     }
   return true;
   }

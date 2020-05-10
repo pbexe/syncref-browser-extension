@@ -29,8 +29,8 @@ var renderMessage = (message) => {
 
 var renderBookmark = (data) => {
   if(chrome.runtime.lastError) {
-    renderMessage(JSON.stringify(chrome.runtime.lastError))
-    setTimeout(renderBookmark, 1000);
+    // renderMessage(JSON.stringify(chrome.runtime.lastError))
+    setTimeout(renderBookmark, 100);
   } else {
     var displayContainer = document.getElementById("display-container")
     if(data) {
@@ -50,12 +50,15 @@ ext.tabs.query({active: true, currentWindow: true}, function(tabs) {
 popup.addEventListener("click", function(e) {
   if(e.target && e.target.matches("#save-btn")) {
     e.preventDefault();
+    document.getElementById("save-btn").classList.add("disabled");
+    document.getElementById("save-btn").disabled = true;
+    console.log(this)
     var data = e.target.getAttribute("data-bookmark");
     ext.runtime.sendMessage({ action: "perform-save", data: data }, function(response) {
       if(response && response.action === "saved") {
         renderMessage("Paper successfully added!");
       } else {
-        renderMessage("Sorry, there was an error while saving paper.");
+        renderMessage("Sorry, there was an error while saving paper:<br>" + response.action);
       }
     })
   }
